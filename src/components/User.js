@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const User = (props) => {
   return (
@@ -15,11 +16,11 @@ const User = (props) => {
 };
 
 User.propTypes = {
-  position: React.PropTypes.number.isRequired,
-  username: React.PropTypes.string.isRequired,
-  profileImage: React.PropTypes.string.isRequired,
-  recentScore: React.PropTypes.number.isRequired,
-  allTimeScore: React.PropTypes.number.isRequired
+  position: PropTypes.number.isRequired,
+  username: PropTypes.string.isRequired,
+  profileImage: PropTypes.string.isRequired,
+  recentScore: PropTypes.number.isRequired,
+  allTimeScore: PropTypes.number.isRequired
 }
 
 export default User;
