@@ -1,6 +1,9 @@
 import React from 'react';
 import User from './User';
 
+const apiRecentTopUsers = 'https://fcctop100.herokuapp.com/api/fccusers/top/recent';
+const apiAlltimeTopUsers = 'https://fcctop100.herokuapp.com/api/fccusers/top/alltime';
+
 class Leaderboard extends React.Component {
   constructor() {
     super();
@@ -13,23 +16,27 @@ class Leaderboard extends React.Component {
     this.toggleAll = this.toggleAll.bind(this);
     this.fetchTopScorersData = this.fetchTopScorersData.bind(this);
   }
+
   componentDidMount() {
     this.fetchTopScorersData();
   }
+
   fetchTopScorersData() {
     Promise.all(
-      ['https://fcctop100.herokuapp.com/api/fccusers/top/recent','https://fcctop100.herokuapp.com/api/fccusers/top/alltime'].map(url => fetch(url)))
+      [apiRecentTopUsers, apiAlltimeTopUsers].map(url => fetch(url)))
       .then((responses) => Promise.all(responses.map(res => res.json())))
       .then(responsesJson => {
-        const topRecent = responsesJson[0].sort((user1, user2) => user2.recent - user1.recent);
-        const topAll = responsesJson[1].sort((user1, user2) => user2.alltime - user1.alltime);
-        this.setState({
-          topThirtyDays: topRecent,
-          topAllTime: topAll
+        const topThirtyDays = responsesJson[0].sort((user1, user2) => user2.recent - user1.recent);
+        const topAllTime = responsesJson[1].sort((user1, user2) => user2.alltime - user1.alltime);
+        const newData = Object.assign({}, this.state, {
+          topThirtyDays,
+          topAllTime
         });
+        this.setState(newData);
       }
     );
   }
+
   toggleRecent(event) {
     event.preventDefault();
     if(!this.state.displayRecent) {
@@ -38,6 +45,7 @@ class Leaderboard extends React.Component {
       });
     }
   }
+
   toggleAll(event) {
     event.preventDefault();
     if(this.state.displayRecent) {
@@ -46,9 +54,10 @@ class Leaderboard extends React.Component {
       });
     }
   }
+
   render() {
-    console.log('render');
-    const toDisplay = this.state.displayRecent ? this.state.topThirtyDays :
+    const toDisplay = this.state.displayRecent ? 
+      this.state.topThirtyDays :
       this.state.topAllTime;
     return (
       <table className='table table-bordered table-sm table-responsive'>
@@ -64,7 +73,6 @@ class Leaderboard extends React.Component {
                     <span className='glyphicon glyphicon-chevron-down glyphicon-align-right' aria-hidden='true'></span>
                 }
               </a>
-
             </th>
             <th className='text-center'>
               <a href='#' onClick={this.toggleAll}>
@@ -80,14 +88,16 @@ class Leaderboard extends React.Component {
         <tbody>
           {
             toDisplay.map((user, index) => {
-              return <User
-                key={user.username}
-                position={index}
-                username={user.username}
-                profileImage={user.img}
-                allTimeScore={user.alltime}
-                recentScore={user.recent}
+              return (
+                <User
+                  key={user.username}
+                  position={index}
+                  username={user.username}
+                  profileImage={user.img}
+                  allTimeScore={user.alltime}
+                  recentScore={user.recent}
               />
+              );
             })
           }
         </tbody>

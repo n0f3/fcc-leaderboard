@@ -1,5 +1,4 @@
 import React from 'react';
-import './App.css';
 import Leaderboard from './Leaderboard';
 
 const App = () => {
